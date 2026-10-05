@@ -13,6 +13,16 @@ const publicPaths = ["/"];
 const apiAuthPrefix = "/api/auth";
 
 /**
+ * Is this one of our own API routes?
+ *
+ * /api/auth is excluded because it is matched and returned earlier — Better Auth
+ * answers its own routes, including its own sign-in and callback.
+ */
+function isApi(pathname: string) {
+  return pathname.startsWith("/api/");
+}
+
+/**
  * Is this path public?
  *
  * A bare prefix test is wrong here: `"/requests".startsWith("/")` is true, so a
@@ -61,8 +71,17 @@ export default function proxy(req: NextRequest) {
   const sessionCookie = getSessionCookie(req);
 
   if (!sessionCookie) {
-    // Send them to the landing page, which is where the Google button is.
-    // `redirect` is kept so Phase 3 can return them to where they were headed.
+    // An API route gets a JSON 401, never a redirect. A fetch() would follow a
+    // 307, land on the HTML landing page, and then fail trying to parse it as
+    // JSON — turning "you are signed out" into a baffling parse error. The route
+    // handlers would have answered 401 on their own via requireSession(); this
+    // just gets there without rendering a page first.
+    if (isApi(pathname)) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
+    // A page gets sent to the landing page, which is where the Google button is.
+    // `redirect` is kept so we can return them to where they were headed.
     const signInUrl = new URL("/", req.url);
     signInUrl.searchParams.set("redirect", pathname);
     return NextResponse.redirect(signInUrl);
