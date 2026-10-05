@@ -1,0 +1,9 @@
+allowBuilds:
+  # Prisma and esbuild ship build scripts that download/generate the query
+  # engine and the bundler binary. Both are required for `prisma generate` and
+  # for the build to succeed. Set to true deliberately.
+  '@prisma/engines': true
+  esbuild: true
+  prisma: true
+  sharp: false
+  unrs-resolver: false

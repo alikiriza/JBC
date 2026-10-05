@@ -1,0 +1,236 @@
+@import "tailwindcss";
+
+@custom-variant dark (&:is(.dark *));
+
+/* ==========================================================================
+   JBC SKIN CREAM APP — DESIGN TOKENS
+   Every value here comes from design-style-guide.md. That file is the source
+   of truth. If a fix needs a value the guide does not have, add it to the
+   guide first, then add it here. Never hardcode hex or px in a component.
+   ========================================================================== */
+
+:root {
+  /* ---- Brand palette (design-style-guide.md §Colors) ------------------- */
+  --color-primary: #2e7d32;          /* Herbal green  — headers, hero, buttons */
+  --color-primary-dark: #1b5e20;     /* Deep green    — hero background       */
+  --color-primary-tint: #e8f5e9;     /* Leaf mist     — soft green surfaces   */
+  --color-accent: #f9c922;           /* Sunny yellow  — badges, hero CTA       */
+  --color-accent-tint: #fff8dc;      /* Soft butter   — warm surfaces         */
+  --color-secondary: #1e6fb8;        /* Calm blue     — links, info, trust    */
+  --color-secondary-tint: #e3f2fd;   /* Sky mist      — cool surfaces         */
+
+  /* ---- Text & surfaces (§Colors) --------------------------------------- */
+  --color-text: #1f2933;             /* Charcoal      — body text             */
+  --color-text-muted: #5b6770;       /* Slate         — secondary text        */
+  --color-bg: #ffffff;               /* White         — page background       */
+  --color-surface-tint: #f7faf8;     /* Very light green wash for page bands  */
+
+  /* ---- Border & focus (§Components: "visible focus ring in blue") ------ */
+  --color-border: #e4e9e6;
+  --color-border-strong: #c9d4cd;
+
+  /* ---- Error (§Colors: Clay red / Blush — the only red in the app) ----- */
+  --color-error: #b3261e;
+  --color-error-tint: #fdecea;
+
+  /* ---- shadcn/ui aliases ------------------------------------------------
+     The JB components are built on shadcn/ui, which expects its own token
+     names (--background, --primary, --border, ...). Those names are aliased
+     onto JBC's palette here so the components inherit the brand instead of
+     importing Tailwind's default greys. No new colours are introduced — every
+     value below resolves to a token defined above.
+     ---------------------------------------------------------------------- */
+  --background: var(--color-bg);
+  --foreground: var(--color-text);
+  --card: var(--color-bg);
+  --card-foreground: var(--color-text);
+  --popover: var(--color-bg);
+  --popover-foreground: var(--color-text);
+  --primary: var(--color-primary);
+  --primary-foreground: #ffffff;
+  --secondary: var(--color-secondary);
+  --secondary-foreground: #ffffff;
+  --muted: var(--color-surface-tint);
+  --muted-foreground: var(--color-text-muted);
+  --accent: var(--color-accent);
+  --accent-foreground: var(--color-text);
+  --destructive: var(--color-error);
+  --destructive-foreground: #ffffff;
+  --border: var(--color-border);
+  --input: var(--color-border);
+  --ring: var(--color-secondary);
+
+  /* ---- Typography (§Typography) ---------------------------------------- */
+  --font-heading: var(--font-nunito), system-ui, -apple-system, sans-serif;
+  --font-body: var(--font-inter), system-ui, -apple-system, sans-serif;
+
+  --text-xs: 0.75rem;      /* 12px */
+  --text-sm: 0.875rem;     /* 14px */
+  --text-base: 1rem;       /* 16px — the style guide's minimum          */
+  --text-lg: 1.125rem;     /* 18px */
+  --text-xl: 1.25rem;      /* 20px — card titles                       */
+  --text-2xl: 1.5rem;      /* 24px */
+  --text-3xl: 1.875rem;    /* 30px */
+  --text-4xl: 2.25rem;     /* 36px */
+  --text-5xl: 3rem;        /* 48px — hero, mobile                      */
+  --text-6xl: 3.5rem;      /* 56px — hero, tablet                      */
+
+  /* ---- Radii (§Layout: "large rounded cards (16px radius)") ----------- */
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;       /* cards                                     */
+  --radius-xl: 20px;
+  --radius-full: 9999px;   /* pill buttons (§Components)                */
+
+  /* ---- Shadows (§Layout: "soft shadows") ------------------------------- */
+  --shadow-xs: 0 1px 2px rgb(31 41 51 / 0.04);
+  --shadow-sm: 0 1px 3px rgb(31 41 51 / 0.06), 0 1px 2px rgb(31 41 51 / 0.04);
+  --shadow-md: 0 4px 12px rgb(31 41 51 / 0.07);
+  --shadow-lg: 0 12px 28px rgb(31 41 51 / 0.09);
+
+  /* ---- Motion (short, under 300ms for UI feedback) -------------------- */
+  --transition-fast: 150ms ease;
+  --transition-base: 200ms ease;
+
+  /* ---- Layout (§Layout: "max content width about 1100px") -------------- */
+  --container-page: 1100px;
+
+  color-scheme: light;
+}
+
+@theme inline {
+  --color-primary: var(--color-primary);
+  --color-primary-dark: var(--color-primary-dark);
+  --color-primary-tint: var(--color-primary-tint);
+  --color-accent: var(--color-accent);
+  --color-accent-tint: var(--color-accent-tint);
+  --color-secondary: var(--color-secondary);
+  --color-secondary-tint: var(--color-secondary-tint);
+  --color-text: var(--color-text);
+  --color-text-muted: var(--color-text-muted);
+  --color-bg: var(--color-bg);
+  --color-surface-tint: var(--color-surface-tint);
+  --color-border: var(--color-border);
+  --color-border-strong: var(--color-border-strong);
+
+  --color-error: var(--color-error);
+  --color-error-tint: var(--color-error-tint);
+
+  /* shadcn/ui aliases, so bg-background / text-foreground / border-border and
+     friends resolve to JBC tokens rather than Tailwind defaults. */
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+
+  --font-heading: var(--font-heading);
+  --font-body: var(--font-body);
+
+  --radius-sm: var(--radius-sm);
+  --radius-md: var(--radius-md);
+  --radius-lg: var(--radius-lg);
+  --radius-xl: var(--radius-xl);
+
+  --shadow-xs: var(--shadow-xs);
+  --shadow-sm: var(--shadow-sm);
+  --shadow-md: var(--shadow-md);
+  --shadow-lg: var(--shadow-lg);
+}
+
+/* ==========================================================================
+   BASE
+   ========================================================================== */
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  /* Layout safety: kills any sideways scroll at 375px */
+  min-width: 0;
+}
+
+html {
+  font-size: 16px;
+  -webkit-text-size-adjust: 100%;
+  overflow-x: clip;
+  scroll-behavior: smooth;
+}
+
+body {
+  overflow-x: clip;
+  background: var(--color-bg);
+  color: var(--color-text);
+  font-family: var(--font-body);
+  /* §Typography: "generous line height (1.6) for easy reading on phones" */
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+h1,
+h2,
+h3,
+h4 {
+  font-family: var(--font-heading);
+  /* Display tracking tightened, never loosened */
+  letter-spacing: -0.02em;
+  line-height: 1.15;
+  /* Long single words must never push the layout sideways */
+  overflow-wrap: anywhere;
+}
+
+p {
+  overflow-wrap: break-word;
+}
+
+::selection {
+  background: var(--color-primary-tint);
+  color: var(--color-primary-dark);
+}
+
+/* §Accessibility + the review's keyboard rule: a visible ring on everything */
+:focus-visible {
+  outline: 2px solid var(--color-secondary);
+  outline-offset: 2px;
+  border-radius: var(--radius-sm);
+}
+
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: var(--color-border-strong);
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-text-muted);
+}
+
+/* §Accessibility: honour reduced-motion for every animation on the site */
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
