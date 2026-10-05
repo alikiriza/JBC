@@ -39,6 +39,17 @@ export const cacheEnabled = redis !== null;
 export const tags = {
   /** A client's own price requests. */
   requests: "requests",
+  /**
+   * The admin requests queue, and the counts in its header.
+   *
+   * Separate from `requests` on purpose. A client's own list is cached per user
+   * id and only changes when that client submits; the admin queue is shared by
+   * every admin and changes whenever an admin prices anything. If they shared a
+   * tag, one admin's write would flush every client's cached list as well.
+   */
+  adminRequests: "admin-requests",
+  /** The admin clients list. */
+  adminClients: "admin-clients",
 } as const;
 
 /**

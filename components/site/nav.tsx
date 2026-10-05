@@ -3,6 +3,7 @@ import { headers } from "next/headers";
 import { Wordmark } from "@/components/site/wordmark";
 import { SignOutButton } from "@/components/site/sign-out-button";
 import { auth } from "@/lib/auth";
+import { verifyAdmin } from "@/lib/admin";
 
 /**
  * Nav. One destination rather than a row of links, because the landing page is
@@ -19,11 +20,17 @@ import { auth } from "@/lib/auth";
  */
 export async function Nav() {
   let user: { name?: string | null; email: string } | null = null;
+  let isAdmin = false;
 
   try {
     const session = await auth.api.getSession({ headers: await headers() });
     if (session) {
       user = { name: session.user.name, email: session.user.email };
+
+      // The same check the admin layout makes, not the `isAdmin` column on its
+      // own — so the link disappears the moment an address is removed from
+      // ADMIN_EMAILS, rather than leaving a door that 403s.
+      isAdmin = await verifyAdmin(session.user.id);
     }
   } catch {
     user = null;
@@ -45,6 +52,16 @@ export async function Nav() {
             >
               My requests
             </Link>
+            {/* Only rendered for a session that passes verifyAdmin(), so a
+                client never sees a link to a page that would refuse them. */}
+            {isAdmin ? (
+              <Link
+                href="/admin"
+                className="hidden min-h-[44px] items-center rounded-full bg-[color:var(--color-accent)] px-3 text-[15px] font-medium text-[color:var(--color-text)] transition-[filter,transform] duration-150 hover:brightness-[0.97] active:scale-[0.98] sm:inline-flex"
+              >
+                Admin
+              </Link>
+            ) : null}
             <SignOutButton />
           </div>
         ) : (

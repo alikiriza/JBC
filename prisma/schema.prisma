@@ -35,7 +35,7 @@ model User {
 
   // JBC's own field, not part of Better Auth's schema.
   //
-  // Set ONLY by syncAdminFlag() in lib/admin.ts after checking the email against
+  // Set ONLY by syncAdminFlag() in lib/admin-flag.ts after checking the email against
   // the ADMIN_EMAILS allowlist. `input: false` in lib/auth.ts stops Better Auth
   // accepting it from a request body, so no client can make themselves admin.
   isAdmin Boolean @default(false)

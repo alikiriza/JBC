@@ -49,27 +49,11 @@ export async function verifyAdmin(userId: string): Promise<boolean> {
 }
 
 /**
- * Keep `user.isAdmin` in step with ADMIN_EMAILS.
- *
- * Called from the sign-in callback so a newly added admin does not have to wait
- * for a manual SQL update, and a removed admin loses the flag on next sign-in.
- * Idempotent: writes only when the value actually differs.
+ * `syncAdminFlag` lives in lib/admin-flag.ts, not here, because lib/auth.ts
+ * calls it on every sign-in and this file imports `auth`. It is re-exported so
+ * there is still one obvious import site for admin helpers.
  */
-export async function syncAdminFlag(userId: string, email: string) {
-  const shouldBeAdmin = isAdminEmail(email);
-
-  const current = await db.user.findUnique({
-    where: { id: userId },
-    select: { isAdmin: true },
-  });
-
-  if (!current || current.isAdmin === shouldBeAdmin) return;
-
-  await db.user.update({
-    where: { id: userId },
-    data: { isAdmin: shouldBeAdmin },
-  });
-}
+export { syncAdminFlag } from "@/lib/admin-flag";
 
 /** True when the current browser session belongs to an admin. */
 export async function isCurrentUserAdmin(): Promise<boolean> {

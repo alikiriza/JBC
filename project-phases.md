@@ -14,6 +14,11 @@
 - Signed-in header state with sign-out
 - Protect client pages
 
+Code complete. **Not yet runnable:** `GOOGLE_CLIENT_ID` and
+`GOOGLE_CLIENT_SECRET` are empty and `DATABASE_URL` is a placeholder, so
+sign-in has never actually been exercised. Until both are real, the Google
+button renders disabled with "Sign in is being connected now".
+
 **Done when:** a client can sign in with Google, see their name, and sign out.
 
 ## Phase 3: Price Requests
@@ -24,10 +29,17 @@
 **Done when:** a signed-in client can submit a request and see it listed as Pending.
 
 ## Phase 4: Admin Page
-- Admin email allowlist
-- Protected admin page: clients list, requests list
-- Admin enters a price and reply note, then marks the request Priced
-- Client sees the price on "My requests"
+- [x] Admin email allowlist
+- [x] Protected admin page: clients list, requests list
+- [x] Admin enters a price and reply note, then marks the request Priced
+- [x] Client sees the price on "My requests"
+
+Built: `app/admin/**` (gated layout, requests queue, clients list),
+`app/api/admin/**` (queue, pricing, clients), `lib/schemas/admin.ts`,
+`components/admin/**`, `components/ui/currency-input.tsx`.
+
+Access needs a real `ADMIN_EMAILS` in `.env.local` — it is still
+`admin@example.com`. Until it is set, everyone who signs in is refused.
 
 **Done when:** the admin prices a request and the client sees the price. Non-admins cannot open the admin page.
 
