@@ -29,6 +29,14 @@ export function Footer() {
                   WhatsApp: 0752 649 115
                 </a>
               </li>
+              <li>
+                <a
+                  href="mailto:joskabproducts@gmail.com"
+                  className="text-[color:var(--color-text)] underline-offset-4 hover:underline"
+                >
+                  joskabproducts@gmail.com
+                </a>
+              </li>
             </ul>
           </div>
         </div>
