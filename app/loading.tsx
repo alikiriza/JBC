@@ -26,9 +26,9 @@ export default function Loading() {
         <Skeleton className="h-9 w-2/3 max-w-[360px] rounded-md" />
         <div className="mt-10 grid gap-5 sm:gap-6 lg:grid-cols-6">
           {["lg:col-span-3", "lg:col-span-3", "lg:col-span-2", "lg:col-span-4"].map(
-            (span) => (
+            (span, index) => (
               <div
-                key={span}
+                key={index}
                 className={`rounded-lg border border-[color:var(--color-border)] p-6 ${span}`}
               >
                 <Skeleton className="aspect-[16/9] w-full rounded-md" />
