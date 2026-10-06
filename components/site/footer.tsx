@@ -23,18 +23,10 @@ export function Footer() {
             <ul className="mt-3 space-y-2 text-[15px] text-[color:var(--color-text-muted)]">
               <li>
                 <a
-                  href="tel:+254752649115"
+                  href="https://wa.me/254752649115"
                   className="text-[color:var(--color-text)] underline-offset-4 hover:underline"
                 >
-                  +254 752 649 115
-                </a>
-              </li>
-              <li>
-                <a
-                  href="mailto:joskabproducts@gmail.com"
-                  className="text-[color:var(--color-text)] underline-offset-4 hover:underline"
-                >
-                  joskabproducts@gmail.com
+                  WhatsApp: 0752 649 115
                 </a>
               </li>
             </ul>
