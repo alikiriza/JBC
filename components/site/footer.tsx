@@ -2,10 +2,6 @@ import { Wordmark } from "@/components/site/wordmark";
 
 /**
  * Footer. Carries the patch-test note from project-description.md.
- *
- * PLACEHOLDER: the contact email and WhatsApp number below are stand-ins.
- * project-description.md lists "Admin contact method (WhatsApp number or
- * phone) shown after pricing" as an open item.
  */
 export function Footer() {
   return (
@@ -24,19 +20,22 @@ export function Footer() {
             <h2 className="text-[15px] font-semibold text-[color:var(--color-primary-dark)]">
               Contact
             </h2>
-            {/* PLACEHOLDER — replace with the real contact details */}
             <ul className="mt-3 space-y-2 text-[15px] text-[color:var(--color-text-muted)]">
               <li>
-                <span className="text-[color:var(--color-text)]">
-                  hello@example.com
-                </span>{" "}
-                <span className="text-[14px]">(email to confirm)</span>
+                <a
+                  href="tel:+254752649115"
+                  className="text-[color:var(--color-text)] underline-offset-4 hover:underline"
+                >
+                  +254 752 649 115
+                </a>
               </li>
               <li>
-                <span className="text-[color:var(--color-text)]">
-                  +000 000 0000
-                </span>{" "}
-                <span className="text-[14px]">(WhatsApp number to confirm)</span>
+                <a
+                  href="mailto:joskabproducts@gmail.com"
+                  className="text-[color:var(--color-text)] underline-offset-4 hover:underline"
+                >
+                  joskabproducts@gmail.com
+                </a>
               </li>
             </ul>
           </div>
