@@ -6,6 +6,31 @@ import { GoogleMark } from "@/components/ui/google-mark";
 import { Button } from "@/components/ui/button";
 
 /**
+ * The signed-in destination after Google hands the browser back.
+ *
+ * A protected route (e.g. /admin) bounces an anonymous visitor to the landing
+ * page with `?redirect=/admin` on the URL. Read that and keep the person on the
+ * path they were heading down, falling back to the request list.
+ *
+ * The value is treated as hostile: it only ever participates in an in-app route
+ * change, so accept a plain same-origin path and nothing else. A value with a
+ * scheme, protocol-relative "//", or backslash is rejected to close open
+ * redirects.
+ */
+function getSafeRedirect(): string {
+  if (typeof window === "undefined") return "/requests";
+
+  const raw = new URLSearchParams(window.location.search).get("redirect");
+  if (!raw || !raw.startsWith("/")) return "/requests";
+  if (raw.startsWith("//") || raw.startsWith("/\\")) return "/requests";
+  if (raw.includes(":") || raw.includes("\\") || raw.includes("\n")) {
+    return "/requests";
+  }
+
+  return raw;
+}
+
+/**
  * Google sign-in. The only sign-in method JBC offers: no passwords, no other
  * providers, no email step.
  *
@@ -38,8 +63,11 @@ export function GoogleSignInButton({
       // errors are surfaced through the callback, not thrown.
       const { error: signInError } = await authClient.signIn.social({
         provider: "google",
-        // Where Better Auth sends the person once Google hands them back.
-        callbackURL: "/requests",
+        // Where Better Auth sends the person once Google hands them back. A
+        // protected route bounces here with ?redirect=/that/route, so pick that
+        // up and carry the person to where they were going. Fall back to the
+        // request list, the default destination.
+        callbackURL: getSafeRedirect(),
       });
 
       if (signInError) throw signInError;
