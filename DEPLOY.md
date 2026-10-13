@@ -66,6 +66,7 @@ click **Deploy**. The site builds and goes live at a free address like
 | `DATABASE_URL` | the pooled Neon connection string |
 | `BETTER_AUTH_SECRET` | the same random secret as `.env.local` |
 | `BETTER_AUTH_URL` | `https://your-vercel-address.vercel.app` |
+| `NEXT_PUBLIC_SITE_URL` | `https://your-vercel-address.vercel.app` |
 | `GOOGLE_CLIENT_ID` | from Google Cloud Console |
 | `GOOGLE_CLIENT_SECRET` | from Google Cloud Console |
 | `ADMIN_EMAILS` | your real email address |
@@ -107,8 +108,9 @@ deploy page for the exact error.
 **"Repository not found" when pushing.** The remote link is wrong or the
 repository is not private to your account. Re-copy the command from GitHub.
 
-**The site looks different from your computer.** Check that `NEXT_PUBLIC_APP_URL`
-matches the real Vercel address. A wrong value breaks fonts and links.
+**The site looks different from your computer.** Check that
+`NEXT_PUBLIC_SITE_URL` matches the real Vercel address. A wrong value breaks
+the share links and the social preview image.
 
 **You want a proper web address** such as `jbccream.com`. Buy the domain, then
 in Vercel go to **Settings** → **Domains** and add it. Vercel handles the

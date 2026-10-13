@@ -114,37 +114,39 @@ export function AdminClientsTable() {
         </div>
       ) : (
         <>
-          <ul className="flex flex-col gap-3">
-            {query.rows.map((client) => (
-              <li
-                key={client.id}
-                className="rounded-md border border-[color:var(--color-border)] bg-[color:var(--color-bg)] p-4"
-              >
-                <div className="flex flex-wrap items-start justify-between gap-3">
-                  <div className="min-w-0">
-                    <p className="text-[16px] font-semibold text-[color:var(--color-text)]">
-                      {client.name || "No name given"}
-                    </p>
-                    <p className="mt-0.5 break-all text-[14px] text-[color:var(--color-text-muted)]">
-                      {client.email}
+          <div className="overflow-x-auto">
+            <ul className="flex flex-col gap-3 min-w-[600px] sm:min-w-0">
+              {query.rows.map((client) => (
+                <li
+                  key={client.id}
+                  className="rounded-md border border-[color:var(--color-border)] bg-[color:var(--color-bg)] p-4"
+                >
+                  <div className="flex flex-wrap items-start justify-between gap-3">
+                    <div className="min-w-0">
+                      <p className="text-[16px] font-semibold text-[color:var(--color-text)]">
+                        {client.name || "No name given"}
+                      </p>
+                      <p className="mt-0.5 break-all text-[14px] text-[color:var(--color-text-muted)]">
+                        {client.email}
+                      </p>
+                    </div>
+
+                    <p className="shrink-0 text-[14px] tabular-nums text-[color:var(--color-text-muted)]">
+                      {formatCount(client.requestCount)}{" "}
+                      {client.requestCount === 1 ? "request" : "requests"}
                     </p>
                   </div>
 
-                  <p className="shrink-0 text-[14px] tabular-nums text-[color:var(--color-text-muted)]">
-                    {formatCount(client.requestCount)}{" "}
-                    {client.requestCount === 1 ? "request" : "requests"}
+                  <p className="mt-3 text-[14px] tabular-nums text-[color:var(--color-text-muted)]">
+                    Signed up {formatDate(client.createdAt)}
+                    {client.lastRequestAt
+                      ? ` · last asked ${formatDate(client.lastRequestAt)}`
+                      : ""}
                   </p>
-                </div>
-
-                <p className="mt-3 text-[14px] tabular-nums text-[color:var(--color-text-muted)]">
-                  Signed up {formatDate(client.createdAt)}
-                  {client.lastRequestAt
-                    ? ` · last asked ${formatDate(client.lastRequestAt)}`
-                    : ""}
-                </p>
-              </li>
-            ))}
-          </ul>
+                </li>
+              ))}
+            </ul>
+          </div>
 
           <div className="flex items-center justify-between gap-4 border-t border-[color:var(--color-border)] pt-4">
             <p className="text-[14px] tabular-nums text-[color:var(--color-text-muted)]" aria-live="polite">

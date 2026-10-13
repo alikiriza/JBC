@@ -165,15 +165,17 @@ export function AdminRequestsTable() {
         </div>
       ) : (
         <>
-          <ul className="flex flex-col gap-3">
-            {query.rows.map((request) => (
-              <RequestCard
-                key={request.id}
-                request={request}
-                onPrice={() => setActive(request)}
-              />
-            ))}
-          </ul>
+          <div className="overflow-x-auto">
+            <ul className="flex flex-col gap-3 min-w-[800px] sm:min-w-0">
+              {query.rows.map((request) => (
+                <RequestCard
+                  key={request.id}
+                  request={request}
+                  onPrice={() => setActive(request)}
+                />
+              ))}
+            </ul>
+          </div>
 
           <Pagination
             page={query.page}

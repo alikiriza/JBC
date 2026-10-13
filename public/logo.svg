@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" role="img" aria-labelledby="title desc">
+  <title id="title">JBC Logo</title>
+  <desc id="desc">JBC - Natural herbal skin cream</desc>
+  <circle cx="100" cy="100" r="90" fill="#3a7c3f" stroke="#2a5f2b" stroke-width="4"/>
+  <g fill="white">
+    <path d="M70 65 L70 85 Q70 95 60 95 Q50 95 50 85 L50 55 Q50 45 60 45 L90 45 Q130 45 130 85 Q130 125 90 125 L60 125 Q55 125 55 130 Q55 135 60 135 L90 135 Q145 135 145 85 Q145 35 90 35 L60 35 Q45 35 45 55 L45 85 Q45 100 60 100 Q75 100 75 85 L75 65 Z"/>
+    <text x="155" y="125" font-family="Nunito, sans-serif" font-size="28" font-weight="700" text-anchor="middle" dominant-baseline="middle">JBC</text>
+  </g>
+</svg>
