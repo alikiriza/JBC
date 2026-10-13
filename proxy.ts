@@ -63,7 +63,14 @@ export default function proxy(req: NextRequest) {
     pathname.startsWith("/_next") ||
     pathname.startsWith("/favicon") ||
     pathname.startsWith("/images") ||
-    pathname.startsWith("/illustrations")
+    pathname.startsWith("/illustrations") ||
+    // Generated social-share images (app/opengraph-image.tsx,
+    // app/twitter-image.tsx). These carry no file extension, so the matcher
+    // below does not skip them — without this they would hit the session gate
+    // and answer a crawler with a 307 to the landing page instead of the PNG,
+    // leaving every Facebook / WhatsApp / X link preview blank.
+    pathname === "/opengraph-image" ||
+    pathname === "/twitter-image"
   ) {
     return NextResponse.next();
   }

@@ -64,6 +64,8 @@ to that address on Vercel before sharing, and to a custom domain later if one is
 connected (Vercel → Settings → Domains).
 
 Still needs a live run: a signed-in test with a real client account and the
-admin account.
+admin account. A production smoke test (build + `next start` + `curl`) has
+covered everything except the Google round trip — every route, the auth gates
+and the share image respond correctly; see `pre-deploy-review-report.md` §8.
 
 **Done when:** the app is ready to share with real clients.

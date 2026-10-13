@@ -12,7 +12,7 @@
 |---|---|---|---|
 | Critical | 0 | 0 | 0 |
 | High | 2 | 2 | 0 |
-| Medium | 3 | 0 | 3 |
+| Medium | 4 | 1 | 3 |
 | Low | 5 | 0 | 5 |
 
 **Verdict.** This is a small, tightly-scoped app and the security fundamentals are
@@ -123,6 +123,23 @@ than inherited.
 **Fix (optional):** the client-side `router.refresh()` after pricing already
 re-checks access. Shortening `expiresIn` to 7–14 days costs little re-login.
 
+### M4 — Social share images were blocked by the auth proxy — **fixed**
+
+**Location:** `proxy.ts` (static-file allowlist).
+
+**Found by the production smoke test (§8), not by reading alone.** The generated
+share images are served from extensionless routes `app/opengraph-image.tsx` /
+`app/twitter-image.tsx`. The proxy's `matcher` deliberately skips anything with a
+file extension (`\.\w+$`), which is why `robots.txt` and `sitemap.xml` pass — but
+`/opengraph-image` has no extension, so it fell through to the session gate and
+answered **307 → `/?redirect=/opengraph-image`**. Every Facebook, WhatsApp and X
+link preview would have shown a blank image, which is the exact thing Phase 5's
+share-image work existed to prevent.
+
+**Fix — applied.** `/opengraph-image` and `/twitter-image` are now in the proxy's
+static-file allowlist. Re-verified: both return `200 image/png`, and the
+`/requests`, `/admin` and `/api` gates are unchanged.
+
 ---
 
 ## 5. Low Priority / Recommendations
@@ -216,5 +233,30 @@ AI-default, so nothing to flag.
 
 ---
 
+## 8. Production Smoke Test
+
+`pnpm build` then `next start`, exercised with `curl` against the production
+server. This is what surfaced M4 and confirmed the rest.
+
+| Check | Expected | Result |
+|---|---|---|
+| `GET /` | 200 + landing HTML | 200, hero copy present |
+| Security headers on `/` | all five present | all five present |
+| `GET /requests` (signed out) | 307 → `/?redirect=/requests` | Pass |
+| `GET /admin` (signed out) | 307 → `/?redirect=/admin` | Pass |
+| `GET /api/requests` (signed out) | 401 JSON | Pass |
+| `GET /api/admin/requests` (signed out) | 401 JSON | Pass |
+| `GET /opengraph-image` | 200 `image/png` | Pass (was 307 — M4) |
+| `GET /twitter-image` | 200 `image/png` | Pass (was 307 — M4) |
+| `GET /robots.txt` | disallow `/admin`, `/api` | Pass |
+| `GET /sitemap.xml` | landing page only | Pass |
+
+**Still not automatable from here:** the live Google sign-in round trip (client
+account → request → admin prices it → client sees the price). That needs a real
+browser, the Google OAuth credentials and the deployed URL — i.e. you.
+
+---
+
 *Generated as the final task before deployment. Both High findings (security
-headers, currency/region) fixed in the same pass.*
+headers, currency/region) and M4 (blocked share images, found by the smoke test)
+fixed in the same pass.*
