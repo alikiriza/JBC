@@ -10,19 +10,19 @@ import { REQUEST_STATUSES } from "@/lib/schemas/price-request";
  */
 
 /**
- * The price an admin enters, in naira.
+ * The price an admin enters, in Ugandan shillings.
  *
  * An integer, not a decimal. Two reasons, and they agree:
  *   • master_prompt.md §FORM RULES RULE 2 — currency form state holds the raw
  *     integer and the comma-formatted string is derived for display.
- *   • JBC quotes whole-naira amounts (lib/format.ts → maximumFractionDigits: 0).
+ *   • JBC quotes whole-shilling amounts (lib/format.ts → maximumFractionDigits: 0).
  * The database column is Decimal(12,2), so this stores as `.00`.
  *
  * The ceiling is a sanity bound, not a business rule: it stops a mistyped
  * number from writing an eleven-figure price that a real client would then be
  * shown.
  */
-export const MAX_PRICE_NGN = 10_000_000;
+export const MAX_PRICE_UGX = 10_000_000;
 
 /**
  * What an admin submits when pricing or closing a request.
@@ -34,10 +34,10 @@ export const MAX_PRICE_NGN = 10_000_000;
 export const UpdatePriceRequestSchema = z
   .object({
     price: z
-      .number({ error: "Enter the price in naira" })
-      .int("Whole naira only")
+      .number({ error: "Enter the price in Ugandan shillings" })
+      .int("Whole shillings only")
       .positive("The price must be more than zero")
-      .max(MAX_PRICE_NGN, "That price looks too high — check the number")
+      .max(MAX_PRICE_UGX, "That price looks too high — check the number")
       // Optional in the schema's own right, because a Priced row may be re-saved
       // without changing the price. The requirement is asserted below.
       .optional(),

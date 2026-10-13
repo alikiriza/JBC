@@ -248,8 +248,8 @@ function PriceRequestForm({
               </FormLabel>
               <FormDescription className="text-[15px] text-[color:var(--color-text-muted)]">
                 The total for all {request.quantity}{" "}
-                {request.quantity === 1 ? "jar" : "jars"}, in naira. Shown to
-                this client only.
+                {request.quantity === 1 ? "jar" : "jars"}, in Ugandan shillings.
+                Shown to this client only.
               </FormDescription>
 
               <FormControl>
@@ -322,7 +322,7 @@ function PriceRequestForm({
                   {...field}
                   value={field.value ?? ""}
                   autoComplete="off"
-                  placeholder="+234 800 000 0000"
+                  placeholder="+256 700 000 000"
                   className="mt-2 h-11 rounded-md border-[color:var(--color-border-strong)] bg-[color:var(--color-bg)] text-[16px] focus-visible:border-[color:var(--color-secondary)]"
                 />
               </FormControl>

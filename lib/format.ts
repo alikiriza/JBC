@@ -9,23 +9,20 @@ import {
  * JBC's formatting defaults.
  *
  * The registry's lib/formatters.ts defaults to en-US, which is wrong for this
- * app — JBC's prices are in naira. Rather than repeating "en-NG" and "NGN" at
- * every call site (and getting one of them wrong), the locale and currency are
- * fixed here once and every screen imports from this file.
- *
- * PLACEHOLDER — if JBC prices in a different currency, `CURRENCY` is the only
- * line to change.
+ * app — JBC's prices are in Ugandan shillings. Rather than repeating "en-UG" and
+ * "UGX" at every call site (and getting one of them wrong), the locale and
+ * currency are fixed here once and every screen imports from this file.
  */
 
-const LOCALE = "en-NG";
+const LOCALE = "en-UG";
 
-/** PLACEHOLDER: JBC has not confirmed the currency. Naira assumed. */
-const CURRENCY = "NGN";
+/** JBC trades in Uganda, so prices are in Ugandan shillings. */
+const CURRENCY = "UGX";
 
 /**
- * A price, in naira, with no decimals.
+ * A price, in Ugandan shillings, with no decimals.
  *
- * JBC has no payment flow, so there is nothing to show kobo for and
+ * JBC has no payment flow, so there is nothing to show cents for and
  * `maximumFractionDigits: 0` keeps the number the shape an amount is expected
  * to have. Stored as Decimal(12,2), so it arrives as a string — hence the
  * parse. Callers pass `null` when no price has been set yet.

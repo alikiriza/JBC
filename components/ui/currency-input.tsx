@@ -20,7 +20,7 @@ import { cn } from "@/lib/utils";
 type CurrencyInputProps = {
   value: number | undefined;
   onChange: (value: number | undefined) => void;
-  /** Rendered as a fixed prefix inside the field. Defaults to naira. */
+  /** Rendered as a fixed prefix inside the field. Defaults to Ugandan shillings. */
   prefix?: string;
   placeholder?: string;
   className?: string;
@@ -40,7 +40,7 @@ export const CurrencyInput = React.forwardRef<HTMLInputElement, CurrencyInputPro
     {
       value,
       onChange,
-      prefix = "₦",
+      prefix = "USh",
       placeholder,
       className,
       wrapperClassName,

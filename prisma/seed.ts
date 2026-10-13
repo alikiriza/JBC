@@ -84,7 +84,7 @@ async function main() {
         status,
         price: priced ? (i % 2 === 0 ? 4500 : 12500.5) : null,
         adminNote: priced ? "Confirmed in stock. Pay on delivery." : null,
-        contactMethod: priced ? "+234 800 000 0000" : null,
+        contactMethod: priced ? "+256 700 000 000" : null,
         pricedAt: priced ? new Date(Date.now() - i * 86400000) : null,
         createdAt: new Date(Date.now() - i * 86400000),
       },
