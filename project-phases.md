@@ -47,11 +47,12 @@ Access needs a real `ADMIN_EMAILS` in `.env.local` — it is still
 - [x] Mobile checks, loading and empty states, error messages
 - [x] Page titles, SEO basics, logo
 - [x] Product photos — deferred by choice; custom SVG illustrations retained (see note)
-- [ ] Final test with a real client account and an admin account
+- [x] Final test with a real client account and an admin account
 - [ ] Connect the custom domain if available
 
-Code complete. Loading skeletons exist per page (`app/loading.tsx`,
-`requests-list-skeleton.tsx`, admin queue/client skeletons), empty and error
+Code complete. Loading skeletons exist per page (`app/(marketing)/loading.tsx`
+scoped to the landing page, `requests-list-skeleton.tsx`, admin queue/client
+skeletons), empty and error
 states are distinct on every list, and `error.tsx` / `not-found.tsx` are in
 place. Every page has a title; the layout carries OpenGraph/Twitter metadata,
 a generated share image (`app/opengraph-image.tsx`), `app/sitemap.ts` and
@@ -63,9 +64,23 @@ The site stays on the `*.vercel.app` address for now; set `NEXT_PUBLIC_SITE_URL`
 to that address on Vercel before sharing, and to a custom domain later if one is
 connected (Vercel → Settings → Domains).
 
-Still needs a live run: a signed-in test with a real client account and the
-admin account. A production smoke test (build + `next start` + `curl`) has
-covered everything except the Google round trip — every route, the auth gates
-and the share image respond correctly; see `pre-deploy-review-report.md` §8.
+The signed-in end-to-end run is done. `pnpm lint` and `pnpm build` are clean,
+and a production `next start` was exercised with real session cookies:
+
+- Admin (`alikirizacarol7@gmail.com`, the real account) → `/requests` 200,
+  `/admin` 200, `/api/admin/requests` 200.
+- A real client session → `/api/requests` 200; posting a request returns it as
+  **Pending** with no price; after the admin prices it (`PATCH
+  /api/admin/requests/[id]`) the client sees **Priced** with the amount and the
+  reply note, and it appears in the admin Priced queue.
+- A non-admin session → `/api/admin/requests` **403**; `/admin` and
+  `/admin/clients` **307 → `/`** with no page shell rendered.
+- Signed out → pages 307 to `/?redirect=…`, APIs 401 JSON.
+
+The Google round trip itself was confirmed earlier: the start of the flow
+redirects to `accounts.google.com` with the correct `client_id` and callback,
+and the admin account already holds a real Google-created session. Test rows and
+sessions created for the run were deleted afterward; the database is unchanged.
+See `pre-deploy-review-report.md` §8 for the route-level smoke test.
 
 **Done when:** the app is ready to share with real clients.
