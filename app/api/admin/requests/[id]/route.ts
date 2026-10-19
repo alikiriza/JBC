@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { requireRole } from "@/lib/auth-guard";
 import { invalidateTag, tags } from "@/lib/cache";
+import { rateLimit } from "@/lib/rate-limit";
 import { UpdatePriceRequestSchema } from "@/lib/schemas/admin";
 
 /**
@@ -31,8 +32,24 @@ export const dynamic = "force-dynamic";
 type Params = { params: Promise<{ id: string }> };
 
 export async function PATCH(req: Request, { params }: Params) {
-  const { error } = await requireRole("admin");
+  const { session, error } = await requireRole("admin");
   if (error) return error;
+
+  // Admin writes are keyed per admin, generously: pricing a queue by hand is
+  // meant to be fast, so the cap stops scripted flooding, not a busy afternoon.
+  const limited = await rateLimit.limit(`admin-pricing:${session.user.id}`, {
+    tokens: 120,
+    window: "1 m",
+  });
+  if (!limited.success) {
+    return NextResponse.json(
+      { error: "Too many requests. Please slow down and try again." },
+      {
+        status: 429,
+        headers: { "Retry-After": String(Math.max(1, limited.reset - Math.floor(Date.now() / 1000))) },
+      },
+    );
+  }
 
   const { id } = await params;
 

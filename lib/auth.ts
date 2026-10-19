@@ -47,6 +47,34 @@ export const auth = betterAuth({
     },
   },
 
+  // ── Rate limiting ───────────────────────────────────────────────────────────
+  // Better Auth throttles its own endpoints: 100 requests / 10 s per path per
+  // client IP, with a stricter built-in 3 / 10 s on sign-in paths. It turns
+  // itself on in production by default — but defaults inherited silently are
+  // the same as defaults never chosen, so they are written out here (same
+  // reasoning as expiresIn above).
+  //
+  // Storage is in-memory, per server instance. Enough for JBC: the auth routes
+  // sit behind the proxy gate, and the app's own write routes use the shared
+  // Upstash limiter (lib/rate-limit.ts), which does survive cold starts. If a
+  // second instance ever makes the per-instance counters too weak, point
+  // `storage` at Better Auth's "secondary-storage" backed by Upstash.
+  rateLimit: {
+    enabled: process.env.NODE_ENV === "production",
+    window: 10,
+    max: 100,
+    customRules: {
+      // Better Auth's built-in sign-in rule is 3 / 10 s per IP. Raised to 10
+      // for a reason specific to this deployment: when the client IP cannot be
+      // resolved (a multi-hop x-forwarded-for with no trustedProxies set), the
+      // limiter falls back to ONE shared bucket for the whole path — so at 3,
+      // three strangers loading sign-in at the same moment could lock the next
+      // real visitor out. 10 / 10 s still throttles a script and cannot lock
+      // out a person. Sign-in is Google-only, so /sign-in/* is the whole flow.
+      "/sign-in/*": { window: 10, max: 10 },
+    },
+  },
+
   user: {
     additionalFields: {
       // JBC's own field. `input: false` means Better Auth will never accept it

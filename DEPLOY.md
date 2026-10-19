@@ -70,6 +70,13 @@ click **Deploy**. The site builds and goes live at a free address like
 | `GOOGLE_CLIENT_ID` | from Google Cloud Console |
 | `GOOGLE_CLIENT_SECRET` | from Google Cloud Console |
 | `ADMIN_EMAILS` | your real email address |
+| `UPSTASH_REDIS_URL` | from Upstash Console → REST API URL (see `NEON-SETUP.md`) |
+| `UPSTASH_REDIS_TOKEN` | from Upstash Console → REST API token |
+
+The two `UPSTASH_` values are optional but recommended: without them the app
+still works — API caching and rate limiting simply switch themselves off — but
+with them the database is protected from repeated identical reads and from
+spammy writes.
 
 `BETTER_AUTH_URL` must be the real Vercel address, not localhost. Sign-in will
 fail on the live site if it still says `http://localhost:3000`.

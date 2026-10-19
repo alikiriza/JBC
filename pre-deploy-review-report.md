@@ -12,7 +12,7 @@
 |---|---|---|---|
 | Critical | 0 | 0 | 0 |
 | High | 2 | 2 | 0 |
-| Medium | 4 | 1 | 3 |
+| Medium | 4 | 2 | 2 |
 | Low | 5 | 3 | 2 |
 
 **Verdict.** This is a small, tightly-scoped app and the security fundamentals are
@@ -86,17 +86,32 @@ WhatsApp number is Ugandan. Every price an admin entered would have been labelle
 
 ## 4. Medium Priority Issues
 
-### M1 — No rate limiting on the API or the auth routes
+### M1 — No rate limiting on the API or the auth routes — fixed
 
-Any signed-in client can hammer `POST /api/requests` and `GET /api/...` with no
-throttle, and Better Auth's sign-in endpoints have no explicit rate limit
-configured. The blast radius is small (writes are bounded by Zod: max 24 jars,
-1000-char note; reads are cached), so this is Medium, not High.
+Any signed-in client could hammer `POST /api/requests` with no throttle, and
+Better Auth's sign-in endpoints had no explicit rate limit configured. The
+blast radius was small (writes are bounded by Zod: max 24 jars, 1000-char
+note), so this was Medium, not High.
 
-**Fix (when the app grows):** Upstash Ratelimit is already installable alongside
-the Redis client — add a sliding-window limiter keyed by `session.user.id` on the
-write routes and by IP on `/api/auth/*`. Better Auth also exposes a built-in
-`rateLimit` option that is off by default.
+**Fix — applied.**
+- **Write routes** use the VibeKit `rate-limit` primitive (`lib/rate-limit.ts`,
+  Upstash sliding window, keyed by session user id — never by IP, so NAT'd
+  networks never share a bucket):
+  - `POST /api/requests` — 10 submissions / 10 min per client.
+  - `PATCH /api/admin/requests/[id]` — 120 pricing writes / min per admin.
+  - Both fail open when Redis is unconfigured or down, matching `lib/cache.ts`'s
+    contract — a throttle outage must not become a request outage.
+- **Auth routes**: Better Auth's `rateLimit` block is now explicit in
+  `lib/auth.ts` (production-on, 100 / 10 s per path, memory storage) with the
+  built-in sign-in rule raised from 3 / 10 s to 10 / 10 s — see the comment
+  there for why the shared-bucket IP fallback makes 3 unsafe on this
+  deployment.
+
+**Caveat — set the Upstash env vars to activate it.** The write-route limiter
+(and the API cache) run on `UPSTASH_REDIS_URL` / `UPSTASH_REDIS_TOKEN`, which
+are still empty in `.env.local` and absent from Vercel. Until they are set,
+the write routes fail open by design and only Better Auth's in-memory limiter
+protects `/api/auth/*`. `DEPLOY.md` now lists both vars.
 
 ### M2 — Case-insensitive `contains` search cannot use the indexes
 
@@ -214,7 +229,7 @@ Applied in this pass. Re-run `pnpm build` after changing it.
 | No secrets or session tokens logged | Pass |
 | No raw error messages shown to the visitor | Pass |
 | HTTP security headers | **Fixed this pass** |
-| Rate limiting | Outstanding (M1) |
+| Rate limiting | **Fixed** (auth explicit; write routes need Upstash env vars) |
 | CSP | Outstanding (Recommendation) |
 
 **Copy integrity:** no invented metrics, testimonials, logos, awards or

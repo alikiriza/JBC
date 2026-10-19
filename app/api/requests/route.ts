@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { requireSession } from "@/lib/auth-guard";
 import { cacheKey, getCachedOrFetch, invalidateTag, tags } from "@/lib/cache";
+import { rateLimit } from "@/lib/rate-limit";
 import {
   CreatePriceRequestSchema,
   ListPriceRequestsSchema,
@@ -100,6 +101,25 @@ export async function GET(req: Request) {
 export async function POST(req: Request) {
   const { session, error } = await requireSession();
   if (error) return error;
+
+  // Throttle before touching the body: every attempt costs a token, malformed
+  // or not. Keyed by user id, not IP — a signed-in client is identified
+  // exactly, and NAT'd networks never share a bucket. 10 submissions per 10
+  // minutes is far above any real client (the form is one jar order at a time)
+  // and far below what a script could push through unthrottled.
+  const limited = await rateLimit.limit(`requests:${session.user.id}`, {
+    tokens: 10,
+    window: "10 m",
+  });
+  if (!limited.success) {
+    return NextResponse.json(
+      { error: "Too many requests. Please wait a moment and try again." },
+      {
+        status: 429,
+        headers: { "Retry-After": String(Math.max(1, limited.reset - Math.floor(Date.now() / 1000))) },
+      },
+    );
+  }
 
   let body: unknown;
   try {
