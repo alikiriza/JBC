@@ -71,7 +71,11 @@ export function GoogleSignInButton({
       });
 
       if (signInError) throw signInError;
-    } catch {
+    } catch (err) {
+      // The visitor gets a plain sentence, never a raw server string — but the
+      // real cause goes to the console so a failure on a deployed build can be
+      // diagnosed from DevTools instead of guessed at.
+      console.error("[sign-in] could not start", err);
       setError(
         "Sign in could not start. Please check your connection and try again.",
       );
