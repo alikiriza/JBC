@@ -58,7 +58,7 @@ export async function PATCH(req: Request, { params }: Params) {
 
   const existing = await db.priceRequest.findUnique({
     where: { id },
-    select: { id: true, status: true, price: true },
+    select: { id: true, status: true, price: true, clientId: true },
   });
 
   if (!existing) {
@@ -96,8 +96,13 @@ export async function PATCH(req: Request, { params }: Params) {
   // counts, and the client's own cached list of their requests. Missing the
   // second is the bug where an admin prices a request and the client keeps
   // seeing "Pending" until the cache expires.
+  //
+  // The client's bucket is scoped to their user id (read from the row, never
+  // from the body) so pricing one request flushes that one client's lists —
+  // not every client's. The admin queue stays unscoped: every admin's copy of
+  // the queue is stale after any write.
   await invalidateTag(tags.adminRequests);
-  await invalidateTag(tags.requests);
+  await invalidateTag(tags.requests, existing.clientId);
 
   return NextResponse.json({
     id: updated.id,

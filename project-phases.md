@@ -14,10 +14,11 @@
 - Signed-in header state with sign-out
 - Protect client pages
 
-Code complete. **Not yet runnable:** `GOOGLE_CLIENT_ID` and
-`GOOGLE_CLIENT_SECRET` are empty and `DATABASE_URL` is a placeholder, so
-sign-in has never actually been exercised. Until both are real, the Google
-button renders disabled with "Sign in is being connected now".
+Code complete. `GOOGLE_CLIENT_ID` / `GOOGLE_CLIENT_SECRET` and
+`DATABASE_URL` are real in `.env.local`, and the Google round trip was
+confirmed in Phase 5 (the admin account holds a real Google-created
+session). If the keys are ever missing, the Google button renders disabled
+with "Sign in is temporarily unavailable."
 
 **Done when:** a client can sign in with Google, see their name, and sign out.
 

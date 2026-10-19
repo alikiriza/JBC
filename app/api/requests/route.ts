@@ -135,8 +135,10 @@ export async function POST(req: Request) {
     select: { id: true, createdAt: true },
   });
 
-  // Bust the cache so "my requests" shows the new row immediately.
-  await invalidateTag(tags.requests);
+  // Bust the cache so "my requests" shows the new row immediately. Scoped to
+  // the submitter: every requests key carries their user id, so no other
+  // client's cached list needs touching.
+  await invalidateTag(tags.requests, session.user.id);
 
   return NextResponse.json(
     {

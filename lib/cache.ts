@@ -84,8 +84,13 @@ export async function getCachedOrFetch<T>(
  * Drop every cached entry for one bucket, whatever page or filter produced it.
  *
  * Called on POST/PATCH/DELETE so the next GET cannot serve a stale list.
+ *
+ * Pass `scope` to invalidate only one key-holder's entries — e.g.
+ * `invalidateTag(tags.requests, userId)` flushes a single client's cached lists
+ * and leaves every other client's untouched. Omit it to flush the whole bucket
+ * (the admin queue, where every admin's copy is stale after one write).
  */
-export async function invalidateTag(tag: string): Promise<void> {
+export async function invalidateTag(tag: string, scope?: string): Promise<void> {
   if (!redis) return;
 
   try {
@@ -93,7 +98,7 @@ export async function invalidateTag(tag: string): Promise<void> {
 
     do {
       const [nextCursor, keys] = await redis.scan(cursor, {
-        match: `tag:${tag}:*`,
+        match: scope ? `tag:${tag}:${scope}:*` : `tag:${tag}:*`,
         count: 100,
       });
 

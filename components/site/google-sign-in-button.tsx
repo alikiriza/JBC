@@ -104,8 +104,7 @@ export function GoogleSignInButton({
           role="status"
           className="mt-3 rounded-sm border border-[color:var(--color-border-strong)] bg-[color:var(--color-bg)] px-4 py-3 text-[14px] leading-relaxed text-[color:var(--color-text)]"
         >
-          Sign in is being connected now. It will be ready in the next step of
-          the build.
+          Sign in is temporarily unavailable. Please try again later.
         </p>
       ) : error ? (
         /* Error state: an icon and words, never colour alone. */

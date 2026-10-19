@@ -13,7 +13,7 @@
 | Critical | 0 | 0 | 0 |
 | High | 2 | 2 | 0 |
 | Medium | 4 | 1 | 3 |
-| Low | 5 | 0 | 5 |
+| Low | 5 | 3 | 2 |
 
 **Verdict.** This is a small, tightly-scoped app and the security fundamentals are
 already right: every route handler starts with `requireSession()` / `requireRole()`,
@@ -144,20 +144,16 @@ static-file allowlist. Re-verified: both return `200 image/png`, and the
 
 ## 5. Low Priority / Recommendations
 
-- **L1 — Over-broad cache invalidation.** `POST /api/requests` calls
-  `invalidateTag(tags.requests)` (`app/api/requests/route.ts:139`), which scans
-  and deletes *every* client's cached list, not just the submitter's. Correct,
-  slightly wasteful. `cacheKey()` already includes the user id, so a scoped
-  delete keyed by `tags.requests:{userId}` would be tighter.
-- **L2 — Leftover build-internal copy.** `components/site/google-sign-in-button.tsx:107`
-  tells the visitor "Sign in is being connected now. It will be ready in the next
-  step of the build." It only shows if the Google keys are missing, but that
-  sentence describes the build process to an end user. Reword to a neutral
-  "Sign in is temporarily unavailable."
-- **L3 — `transition-all` remains in unused shadcn primitives.**
-  `components/ui/progress.tsx:23` and `components/ui/tabs.tsx:66`. Neither is
-  imported by any page — dead weight, not a live defect. Delete both if nothing
-  will use them.
+- **L1 — Over-broad cache invalidation — fixed.** `invalidateTag()` now takes an
+  optional scope (`lib/cache.ts`), so `POST /api/requests` and the admin pricing
+  PATCH both flush only the affected client's cached lists
+  (`invalidateTag(tags.requests, userId)`) instead of every client's. The admin
+  queue stays unscoped — every admin's copy is stale after a write.
+- **L2 — Leftover build-internal copy — fixed.** `components/site/google-sign-in-button.tsx`
+  now says "Sign in is temporarily unavailable. Please try again later." instead
+  of describing the build process to an end user.
+- **L3 — `transition-all` in unused shadcn primitives — fixed.** The unused
+  `components/ui/progress.tsx` and `components/ui/tabs.tsx` were deleted.
 - **L4 — No per-block `<ErrorBoundary>`.** The app relies on the route-level
   `app/error.tsx`. Every marketing section is a static Server Component with no
   data fetching, so one crash cannot take the page down; acceptable. Add block
