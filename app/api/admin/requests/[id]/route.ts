@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { requireRole } from "@/lib/auth-guard";
+import { withApiErrors } from "@/lib/api-error";
 import { invalidateTag, tags } from "@/lib/cache";
 import { rateLimit } from "@/lib/rate-limit";
 import { UpdatePriceRequestSchema } from "@/lib/schemas/admin";
@@ -31,7 +32,7 @@ export const dynamic = "force-dynamic";
 
 type Params = { params: Promise<{ id: string }> };
 
-export async function PATCH(req: Request, { params }: Params) {
+async function PATCHHandler(req: Request, { params }: Params) {
   const { session, error } = await requireRole("admin");
   if (error) return error;
 
@@ -130,6 +131,8 @@ export async function PATCH(req: Request, { params }: Params) {
     pricedAt: updated.pricedAt ? updated.pricedAt.toISOString() : null,
   });
 }
+
+export const PATCH = withApiErrors("PATCH /api/admin/requests/[id]", PATCHHandler);
 
 /**
  * Zod v4 dropped `.flatten()`. Every issue keyed by its field path, message as

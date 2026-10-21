@@ -4,6 +4,7 @@ import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { AlertIllustration } from "@/components/illustrations";
 import { Button } from "@/components/ui/button";
+import { logger } from "@/lib/logger";
 
 export default function ErrorPage({
   error,
@@ -15,8 +16,9 @@ export default function ErrorPage({
   const router = useRouter();
 
   useEffect(() => {
-    // Server-side detail only. Never surface the raw message to the visitor.
-    console.error(error);
+    // Structured line for the log drain. Server-side detail only — never
+    // surfaced to the visitor.
+    logger.error("Route error boundary", { error });
   }, [error]);
 
   return (

@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { requireRole } from "@/lib/auth-guard";
+import { withApiErrors } from "@/lib/api-error";
 import { cacheKey, getCachedOrFetch, tags } from "@/lib/cache";
 import {
   ListAdminRequestsSchema,
@@ -35,7 +36,7 @@ export const dynamic = "force-dynamic";
  *  person using it while the invalidateTag below makes writes instant anyway. */
 const TTL = 30;
 
-export async function GET(req: Request) {
+async function GETHandler(req: Request) {
   const { session, error } = await requireRole("admin");
   if (error) return error;
 
@@ -146,3 +147,5 @@ export async function GET(req: Request) {
 
   return NextResponse.json(result);
 }
+
+export const GET = withApiErrors("GET /api/admin/requests", GETHandler);

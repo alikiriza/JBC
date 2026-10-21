@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { requireSession } from "@/lib/auth-guard";
+import { withApiErrors } from "@/lib/api-error";
 import { cacheKey, getCachedOrFetch, invalidateTag, tags } from "@/lib/cache";
 import { rateLimit } from "@/lib/rate-limit";
 import {
@@ -30,7 +31,7 @@ import {
 // Only ever cache a signed-in client's own list, keyed by their user id.
 export const dynamic = "force-dynamic";
 
-export async function GET(req: Request) {
+async function GETHandler(req: Request) {
   const { session, error } = await requireSession();
   if (error) return error;
 
@@ -98,7 +99,7 @@ export async function GET(req: Request) {
   return NextResponse.json(result);
 }
 
-export async function POST(req: Request) {
+async function POSTHandler(req: Request) {
   const { session, error } = await requireSession();
   if (error) return error;
 
@@ -168,6 +169,9 @@ export async function POST(req: Request) {
     { status: 201 },
   );
 }
+
+export const GET = withApiErrors("GET /api/requests", GETHandler);
+export const POST = withApiErrors("POST /api/requests", POSTHandler);
 
 /**
  * Zod v4 dropped `.flatten()`. This is the equivalent: every issue keyed by its

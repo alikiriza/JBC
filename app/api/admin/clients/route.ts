@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { requireRole } from "@/lib/auth-guard";
+import { withApiErrors } from "@/lib/api-error";
 import { cacheKey, getCachedOrFetch, tags } from "@/lib/cache";
 import {
   ListAdminClientsSchema,
@@ -26,7 +27,7 @@ export const dynamic = "force-dynamic";
 /** Reference-ish data: client records change far less often than requests do. */
 const TTL = 60;
 
-export async function GET(req: Request) {
+async function GETHandler(req: Request) {
   const { session, error } = await requireRole("admin");
   if (error) return error;
 
@@ -100,3 +101,5 @@ export async function GET(req: Request) {
 
   return NextResponse.json(result);
 }
+
+export const GET = withApiErrors("GET /api/admin/clients", GETHandler);
