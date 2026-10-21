@@ -8,8 +8,9 @@ contact form that anyone can use without an account.
 - The admin sees **every** request and sets prices and notes.
 - No email, SMS, or notification is sent anywhere — pricing stays inside the app.
 
-> **Status:** Phases 1–4 are implemented and building. Deployment and real product
-> photography are still outstanding. See [Project status](#project-status).
+> **Status:** Code complete through Phase 5 — polished, smoke-tested, and ready
+> to deploy. A custom domain and real product photography are the only open
+> items. See [Project status](#project-status).
 
 ---
 
@@ -108,6 +109,7 @@ the account's `isAdmin` flag automatically, so no database editing is needed.
 | `pnpm build`      | Production build                                    |
 | `pnpm start`      | Serve the production build                          |
 | `pnpm lint`       | ESLint                                              |
+| `pnpm typecheck`  | TypeScript type checking (`tsc --noEmit`)           |
 | `pnpm db:push`    | Sync schema to the database                         |
 | `pnpm db:studio`  | Prisma Studio — browse data                         |
 | `pnpm db:seed`    | Insert sample clients and requests                  |
@@ -163,8 +165,8 @@ inside the routes are.
 
 ```
 app/
-  page.tsx                    landing page
-  requests/                   client request list + new request form
+  (marketing)/                 landing page (route group)
+  requests/                    client request list + new request form
   admin/                      admin queue + client list
   api/                        requests, admin, and Better Auth routes
 components/
@@ -193,17 +195,19 @@ Tracked in `project-phases.md`.
 - [x] Phase 2 — Google sign-in, database
 - [x] Phase 3 — client price requests
 - [x] Phase 4 — admin queue, pricing, client list
-- [ ] Phase 5 — real product photos and logo, end-to-end tests, custom domain
+- [x] Phase 5 — SEO, share image, logo, mobile polish, smoke tests
+- [ ] Custom domain (app stays on `*.vercel.app` until connected)
+- [ ] Real product photography (deferred — custom SVG illustrations ship)
 
 Before this app is usable in production:
 
-- [ ] Real product photography and a proper logo (currently placeholders)
-- [ ] Set a real `ADMIN_EMAILS`
+- [x] Set a real `ADMIN_EMAILS`
+- [x] Run a manual pass through sign-in → submit request → price → client sees price
 - [ ] Confirm the GitHub repository is **private**
 - [ ] Deploy to Vercel and set the environment variables there too — the local
       `.env.local` does not travel with the code
-- [ ] Change `BETTER_AUTH_URL` to the real production origin
-- [ ] Run a manual pass through sign-in → submit request → price → client sees price
+- [ ] Change `BETTER_AUTH_URL` and `NEXT_PUBLIC_SITE_URL` to the real origin
+- [ ] Set Upstash Redis env vars on Vercel (write-rate limiting is a no-op without them)
 
 ---
 
