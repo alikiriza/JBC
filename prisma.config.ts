@@ -7,7 +7,7 @@
 
 import "dotenv/config";
 import { config } from "dotenv";
-import { defineConfig, env } from "prisma/config";
+import { defineConfig } from "prisma/config";
 
 // `dotenv/config` alone only loads `.env`. JBC keeps its real values in
 // `.env.local`, which is the file .gitignore protects and the one Next.js
@@ -15,8 +15,10 @@ import { defineConfig, env } from "prisma/config";
 // over a stray .env.
 config({ path: ".env.local", override: true });
 
+const databaseUrl = process.env.DATABASE_URL || "postgresql://user:password@localhost:5432/postgres";
+
 export default defineConfig({
   schema: "prisma/schema.prisma",
   migrations: { path: "prisma/migrations" },
-  datasource: { url: env("DATABASE_URL") },
+  datasource: { url: databaseUrl },
 });
