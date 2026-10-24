@@ -4,13 +4,14 @@ import { Wordmark } from "@/components/site/wordmark";
 import { SignOutButton } from "@/components/site/sign-out-button";
 import { auth } from "@/lib/auth";
 import { verifyAdmin } from "@/lib/admin";
+import { GetAPriceCta } from "@/components/site/get-a-price-cta";
 
 /**
  * Nav. One destination rather than a row of links, because the landing page is
  * a single scroll.
  *
  * A Server Component, so it knows who is signed in on the first render with no
- * client-side fetch. Signed out it offers the "Get a price" jump link; signed
+ * client-side fetch. Signed out it offers the "Get a price" sign-in/action; signed
  * in it offers the person's name, their requests page, and sign-out.
  *
  * The session read is wrapped in try/catch because the nav renders inside the
@@ -65,12 +66,9 @@ export async function Nav() {
             <SignOutButton />
           </div>
         ) : (
-          <a
-            href="#get-a-price"
+          <GetAPriceCta
             className="inline-flex min-h-[44px] items-center rounded-full bg-[color:var(--color-accent)] px-5 text-[15px] font-medium text-[color:var(--color-text)] transition-[filter,transform] duration-150 hover:brightness-[0.97] active:scale-[0.98]"
-          >
-            Get a price
-          </a>
+          />
         )}
       </div>
     </header>
